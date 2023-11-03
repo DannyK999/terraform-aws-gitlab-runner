@@ -17,7 +17,15 @@ for i in {1..7}; do
   yum -y update && break || sleep 60
 done
 
-yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+# Adding workaround based on: https://github.com/awslabs/amazon-eks-ami/issues/1500
+
+if yum list installed | grep amazon-ssm-agent; then
+  echo "amazon-ssm-agent already present - skipping install"
+else
+  sudo yum install -y amazon-ssm-agent
+  echo "Installing amazon-ssm-agent"
+  yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+
 systemctl restart amazon-ssm-agent
 
 ${logging}
