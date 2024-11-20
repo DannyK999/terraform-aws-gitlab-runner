@@ -18,38 +18,10 @@ resource "aws_s3_bucket" "build_cache" {
   count = var.create_cache_bucket ? 1 : 0
 
   bucket = local.cache_bucket_name
-  acl    = "private"
 
   tags = local.tags
 
   force_destroy = true
-
-  versioning {
-    enabled = var.cache_bucket_versioning
-  }
-
-  lifecycle_rule {
-    id      = "clear"
-    enabled = var.cache_lifecycle_clear
-
-    prefix = var.cache_lifecycle_prefix
-
-    expiration {
-      days = var.cache_expiration_days
-    }
-
-    noncurrent_version_expiration {
-      days = var.cache_expiration_days
-    }
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
 }
 
 resource "aws_iam_policy" "docker_machine_cache" {
